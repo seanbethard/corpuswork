@@ -1,21 +1,9 @@
-postgres=# CREATE TABLE comcrawl (
-        id serial PRIMARY KEY,
-        urlkey TEXT UNIQUE NOT NULL,
-        timestamp TEXT NOT NULL,
-        url TEXT UNIQUE NOT NULL,
-        mime TEXT NOT NULL,
-        mime_detected TEXT UNIQUE,
-        status TEXT NOT NULL,
-        digest TEXT UNIQUE NOT NULL,
-        length TEXT UNIQUE NOT NULL,
-        offset_ TEXT UNIQUE NOT NULL,
-        filename TEXT NOT NULL,
-        languages TEXT UNIQUE,
-        encoding TEXT UNIQUE,
-        html VARCHAR ( 20000 ) UNIQUE NOT NULL
+postgres=# CREATE TABLE sentences(
+        uuid UUID UNIQUE NOT NULL,
+        sentence TEXT NOT NULL
 );
 
-COPY comcrawl(id,urlkey,timestamp,url,mime,mime_detected,status,digest,length,offset_,filename,languages,encoding,html)
+COPY sentences(uuid,sentence)
 FROM 'comcrawl.csv'
 DELIMITER ','
 CSV HEADER;
