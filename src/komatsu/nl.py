@@ -19,6 +19,7 @@ class Collection:
         Writes HTML results from CommonCrawl API to CSV format.
         :param source: str: search query
         :param create_index: boolean: set to false to load pickled index
+        :returns: DataFrame of comcrawl results
         """
         if create_index:
             print('Creating index...')
@@ -40,7 +41,9 @@ class Collection:
                           .to_dict("records"))
 
         client.download()
-        pd.DataFrame(client.results).to_csv("comcrawl.csv")
+        df = pd.DataFrame(client.results)
+        df.to_csv("comcrawl.csv")
+        return df
 
     @staticmethod
     def sentence_finder(comcrawl_csv):

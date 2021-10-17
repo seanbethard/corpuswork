@@ -1,9 +1,2 @@
-postgres=# CREATE TABLE sentences(
-        uuid UUID UNIQUE NOT NULL,
-        sentence TEXT NOT NULL
-);
-
-COPY sentences(uuid,sentence)
-FROM 'comcrawl.csv'
-DELIMITER ','
-CSV HEADER;
+CREATE TABLE sentences(uuid UUID UNIQUE NOT NULL,sentence TEXT NOT NULL);
+COPY sentences(uuid,sentence) FROM 'comcrawl.csv' DELIMITER ',' CSV HEADER;
