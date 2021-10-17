@@ -41,9 +41,7 @@ class Collection:
                           .to_dict("records"))
 
         client.download()
-        df = pd.DataFrame(client.results)
-        df.to_csv("comcrawl.csv")
-        return df
+        pd.DataFrame(client.results).to_csv("comcrawl.csv")
 
     @staticmethod
     def sentence_finder(comcrawl_csv):

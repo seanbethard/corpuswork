@@ -2,6 +2,12 @@ from komatsu.nl import Collection
 
 
 if __name__ == "__main__":
+
+    # define search query
     search_query = ''
-    df = Collection.get_raw_html(search_query, create_index=False)
+
+    # get raw HTML
+    Collection.get_raw_html(search_query, create_index=False)
+
+    # get sentences
     Collection.sentence_finder('comcrawl.csv')
