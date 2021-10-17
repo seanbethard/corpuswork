@@ -61,13 +61,15 @@ class Collection:
 
         for page in html_pages:
 
-            soup = BeautifulSoup(page, 'html.parser')
+            if isinstance(page, str):
 
-            for paragraph in soup.find_all("p"):
-                spacy_doc = sbd(paragraph.get_text())
-                for sentence in spacy_doc.sents:
-                    sentences.append(sentence.text)
-                    uuids.append(str(uuid.uuid4()))
+                soup = BeautifulSoup(page, 'html.parser')
+
+                for paragraph in soup.find_all("p"):
+                    spacy_doc = sbd(paragraph.get_text())
+                    for sentence in spacy_doc.sents:
+                        sentences.append(sentence.text)
+                        uuids.append(str(uuid.uuid4()))
 
         with open('sentences-' + comcrawl_csv, mode='w') as f:
 
