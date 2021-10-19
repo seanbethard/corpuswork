@@ -1,0 +1,217 @@
+% start S
+
+# ###################
+# Grammar Productions
+# ###################
+
+#
+# S expansion productions
+#
+
+S -> DP[AGR=?a] TP[AGR=?a]| DP[AGR=?a] AdvP TP[AGR=?a]
+
+#
+# sentence structure adverbs
+#
+
+S -> AdvP S| S AdvP 
+
+#
+# Sentence structure clausal adjuncts
+#
+
+S -> Sub S | S Sub
+Sub -> Comp S
+
+#
+# Sentence structure PP adjuncts
+#
+
+S -> PP S | S PP 
+
+#
+# TP expansion productions
+#
+
+TP[AGR=?a] -> VP[AGR=?a]| ModP | AuxP[AGR=?a]
+TP[AGR=?a] -> DO[AGR=?a] Neg InfP
+
+# Verb extensions
+VP[AGR=?a] -> V_trans[AGR=?a]DP | V_intrans[AGR=?a]
+
+ModP -> Mod InfP| Mod ProgP| Mod PerfP| Mod PerfprogP
+ModP -> Mod Neg InfP | Mod Neg ProgP | Mod Neg PerfP | Mod Neg PerfprogP
+ModP -> Mod AdvP InfP | Mod AdvP ProgP | Mod AdvP PerfP | Mod AdvP PerfprogP
+ModP -> Mod Neg AdvP InfP | Mod Neg AdvP ProgP | Mod Neg AdvP PerfP | Mod Neg AdvP PerfprogP
+ParP[ASP=perf] -> Par[ASP=perf]| Par[ASP=perf] DP 
+ParP[ASP=prog] -> Par[ASP=prog] | Par[ASP=prog] DP
+ParP[ASP=perfprog] -> Par[ASP=perf] ParP[ASP=prog]
+ParP[ASP=perfprog] -> Par[ASP=perf] Neg ParP[ASP=prog]
+
+ProgP -> Prog ParP[ASP=prog]
+ParP[ASP=prog] -> Neg ParP[ASP=prog]
+ParP[ASP=prog] -> AdvP ParP[ASP=prog]
+ParP[ASP=prog] -> AdvP Neg ParP[ASP=prog]
+ProgP -> Prog ParP[ASP=prog]
+
+PerfP -> Perf ParP[ASP=perf]
+PerfP -> Perf Neg ParP[ASP=perf]
+ParP[ASP=perf] -> AdvP ParP[ASP=perf]
+ParP[ASP=perf] -> Neg ParP[ASP=perf]
+ParP[ASP=perf] -> AdvP Neg ParP[ASP=perf]
+
+PerfprogP -> Perf ParP[ASP=perfprog]
+PerfprogP -> Perf Neg ParP[ASP=perfprog]
+PerfprogP -> Perf Neg AdvP ParP[ASP=perfprog]
+InfP -> Inf_trans DP | Inf_intrans
+
+AuxP[AGR=?a] -> Aux[ASP=perf, AGR=?a] ParP[ASP=perf] | Aux[ASP=prog, AGR=?a] ParP[ASP=prog] | Aux[ASP=perf, AGR=?a] ParP[ASP=perfprog]
+
+#
+# DP expansion productions
+#
+
+#DP rules
+DP -> Dbar
+DP -> DP Dbar
+Dbar -> D NP
+
+#NP rules
+NP -> N
+NP -> N PP
+
+# Noun extensions
+NP -> N
+NP -> N PP
+NP -> AdjP N
+NP -> N AdjP
+
+# Noun agreement
+N[AGR=?a] -> NAME[AGR=?a]
+N[AGR=?a] -> PRO[AGR= ?a]
+
+#PP extension
+PP -> P DP
+
+# AdjP expansion
+AdjP -> Adj PP
+AdjP -> Adj
+AdjP -> AdvP AdjP
+AdjP -> Neg AdjP
+
+# AdvP expansions
+AdvP -> Adv
+AdvP -> Neg AdvP
+
+#
+# Coordination expansions
+#
+
+DP[AGR=[PER=3, NUM=pl]] -> DP Join DP
+PRO[AGR=[PER=1, NUM=pl]]-> PRO[AGR=[PER=1, NUM=sg]] Join PRO[AGR=[PER=2, NUM=sg]] | PRO[AGR=[PER=1, NUM=sg]] Join PRO[AGR=[PER=2, NUM=pl]]
+PRO[AGR=[PER=1, NUM=pl]]-> PRO[AGR=[PER=1, NUM=pl]] Join PRO[AGR=[PER=2, NUM=sg]] | PRO[AGR=[PER=1, NUM=pl]] Join PRO[AGR=[PER=2, NUM=pl]]
+PRO[AGR=[PER=1, NUM=pl]]-> PRO[AGR=[PER=1, NUM=sg]] Join PRO[AGR=[PER=3, NUM=sg]] | PRO[AGR=[PER=1, NUM=sg]] Join PRO[AGR=[PER=3, NUM=pl]]
+PRO[AGR=[PER=1, NUM=pl]]-> PRO[AGR=[PER=1, NUM=pl]] Join PRO[AGR=[PER=3, NUM=sg]] | PRO[AGR=[PER=1, NUM=pl]] Join PRO[AGR=[PER=3, NUM=pl]]
+PRO[AGR=[PER=2, NUM=pl]]-> PRO[AGR=[PER=2, NUM=sg]] Join PRO[AGR=[PER=3, NUM=sg]] | PRO[AGR=[PER=2, NUM=sg]] Join PRO[AGR=[PER=3, NUM=pl]]
+PRO[AGR=[PER=2, NUM=pl]]-> PRO[AGR=[PER=2, NUM=pl]] Join PRO[AGR=[PER=3, NUM=sg]] | PRO[AGR=[PER=2, NUM=pl]] Join PRO[AGR=[PER=3, NUM=pl]]
+AdjP -> AdjP Join AdjP
+S -> S Join S
+ModP -> ModP Join ModP
+AuxP -> AuxP Join AuxP
+InfP -> InfP Join InfP
+PerfP -> PerfP Join PerfP
+ProgP -> ProgP Join ProgP
+PerfprogP -> PerfprogP Join PerfprogP
+ParP[ASP=perf] -> ParP[ASP=perf] Join ParP[ASP=perf]
+ParP[ASP=prog] -> ParP[ASP=prog] Join ParP[ASP=prog]
+ParP[ASP=perfprog] -> ParP[ASP=perfprog] Join ParP[ASP=perfprog]
+
+# ###################
+# Lexical Productions
+# ###################
+
+D[AGR=[PER=3]] -> 'the' | 'some'
+D[AGR=[PER=3, NUM=sg]] -> 'this' | 'that' | 'every' | 'a'
+D[AGR=[NUM=pl]] -> 'these' | 'those' | 'all' | 'most' | 'several' 
+
+Adj -> 'visible' | 'blue' | 'naked' | 'silver' | 'tasty'
+Adv -> 'often' | 'very'
+
+N[AGR=[NUM=sg]] -> 'park' | 'dog' | 'lake' | 'eye' | 'cat' | 'box' | 'beach' | 'door'
+N[AGR=[NUM=pl]] -> 'dogs' | 'stars' | 'apples'
+
+NAME[AGR=[PER=3, NUM=sg]] -> 'John' | 'Mary'
+
+P -> 'at' | 'by' | 'under' | 'to' | 'of' | 'in' | 'on' | 'through'
+
+# Possessives
+
+D[AGR=[PER=3]] -> "'s"
+D[AGR=[PER=3]] -> 'his' | 'her' | 'their' | 
+D[AGR=[PER=2]] -> 'your' | 'yours'
+D[AGR=?a] -> 'my' | 'mine'
+D[AGR=?a] -> 'our' | 'ours'
+
+# Pronouns
+PRO[AGR=[PER=1, NUM=sg]]-> 'I'
+PRO[AGR=[PER=2, NUM=sg]]-> 'you'
+PRO[AGR=[PER=3, NUM=sg]]-> 'he' | 'she'
+PRO[AGR=[PER=1, NUM=pl]]-> 'we'
+PRO[AGR=[PER=2, NUM=pl]]-> 'you'
+PRO[AGR=[PER=4, NUM=pl]]-> 'they'
+
+V_intrans[AGR=[PER=1, NUM=sg]] -> 'disappear' | 'walk'
+V_intrans[AGR=[PER=2, NUM=sg]] -> 'disappear' | 'walk'
+V_intrans[AGR=[PER=3, NUM=sg]] -> 'disappears' | 'walks'|'comes' |'cries'
+V_intrans[AGR=[PER=1, NUM=pl]] -> 'disappear' | 'walk'
+V_intrans[AGR=[PER=2, NUM=pl]] -> 'disappear' | 'walk'
+V_intrans[AGR=[PER=3, NUM=pl]] -> 'disappear' | 'walk'
+
+V_trans[AGR=[PER=1, NUM=sg]] -> 'see' | 'like' |'eat'
+V_trans[AGR=[PER=2, NUM=sg]] -> 'see' | 'like' | 'eat'
+V_trans[AGR=[PER=3, NUM=sg]] -> 'sees' | 'likes'|'eats'
+V_trans[AGR=[PER=1, NUM=pl]] -> 'see' | 'like' | 'eat'
+V_trans[AGR=[PER=2, NUM=pl]] -> 'see' | 'like' | 'eat'
+V_trans[AGR=[PER=3, NUM=pl]] -> 'see' | 'like' | 'eat'
+
+Perf -> 'have'
+Prog -> 'be'
+
+# Participles
+Par[ASP = perf] -> 'eaten'|'broken'|'walked'|'been'
+Par[ASP = prog] -> 'eating'|'breaking'|'walking'
+
+# Infinitives
+Inf_trans -> 'eat' |'see' | 'like'
+Inf_intrans -> 'walk' |'come'
+
+# Modals
+Mod -> 'can'|'will'|'must'|'may'|'shall'|'could'|'would'|'had to'|'might'|'should'
+
+# Auxiliaries
+Aux[AGR=[ASP=perf,PER=1,NUM=sg]] -> 'have'
+Aux[AGR=[ASP=perf,PER=2,NUM=sg]] -> 'have'
+Aux[AGR=[ASP=perf,PER=3,NUM=sg]] -> 'has'
+Aux[AGR=[ASP=perf,PER=1,NUM=pl]] -> 'have'
+Aux[AGR=[ASP=perf,PER=2,NUM=pl]] -> 'have'
+Aux[AGR=[ASP=perf,PER=3,NUM=pl]] -> 'have'
+Aux[AGR=[ASP=prog,PER=1,NUM=sg]] -> 'am'
+Aux[AGR=[ASP=prog,PER=2,NUM=sg]] -> 'are'
+Aux[AGR=[ASP=prog,PER=3,NUM=sg]] -> 'is'
+Aux[AGR=[ASP=prog,PER=1,NUM=pl]] -> 'are'
+Aux[AGR=[ASP=prog,PER=2,NUM=pl]] -> 'are'
+Aux[AGR=[ASP=prog,PER=3,NUM=pl]] -> 'are'
+
+# Do-support
+DO[AGR=[PER=1,NUM=sg]] -> 'do'
+DO[AGR=[PER=2,NUM=sg]] -> 'do'
+DO[AGR=[PER=3,NUM=sg]] -> 'does'
+DO[AGR=[PER=1,NUM=pl]] -> 'do'
+DO[AGR=[PER=2,NUM=pl]] -> 'do'
+DO[AGR=[PER=3,NUM=pl]] -> 'do'
+
+# Negation
+Neg -> 'not'
+
+Comp -> 'because'|'if'
+Join -> 'and'|'or'

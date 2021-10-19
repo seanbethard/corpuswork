@@ -1,0 +1,75 @@
+% start S
+
+# ###################
+# Grammar Productions
+# ###################
+
+#
+# S expansion productions
+#
+
+S -> NP[AGR=?a] VP[AGR=?a]
+
+#
+# NP expansion productions
+#
+
+NP[AGR=?a] -> NAME[AGR=?a]
+NP[AGR=?a] -> PRO[AGR=?a] 
+NP[AGR=?a] -> Det[AGR=?a] N[AGR=?a]
+NP[AGR=[NUM=pl]] -> N[AGR=[NUM=pl]]
+N -> Adj N
+
+#
+# VP expansion productions
+#
+
+VP[AGR=?a] -> IV[AGR=?a]
+VP[AGR=?a] -> TV[AGR=?a] NP
+
+# ###################
+# Lexical Productions
+# ###################
+
+# Determiners
+Det[AGR=[PER=3, NUM=sg]] -> 'this' | 'that' | 'every' | 'a'
+Det[AGR=[PER=3, NUM=pl]] -> 'these' | 'those' | 'all' | 'most' | 'several'
+Det[AGR=[PER=3]] -> 'the' | 'some' 
+
+# Names
+NAME[AGR=[PER=3, NUM=sg]]-> 'Kim' | 'Jody' | 'John' | 'Mary'|'Bill'
+
+# Nouns
+N[AGR=[PER=3, NUM=sg]] -> 'dog' | 'girl' | 'car' | 'child'|'cake'|'quiche'
+N[AGR=[PER=3, NUM=pl]] -> 'dogs' | 'girls' | 'cars' | 'children'
+
+# Pronouns
+PRO[AGR=[PER=1, NUM=sg]]-> 'I'
+PRO[AGR=[PER=2, NUM=sg]]-> 'you'
+PRO[AGR=[PER=3, NUM=sg]]-> 'he' | 'she'
+PRO[AGR=[PER=1, NUM=pl]]-> 'we'
+PRO[AGR=[PER=2, NUM=pl]]-> 'you'
+PRO[AGR=[PER=4, NUM=pl]]-> 'they'
+
+# Verbs
+IV[AGR=[PER=1, NUM=sg]] -> 'disappear' | 'walk'
+IV[AGR=[PER=2, NUM=sg]] -> 'disappear' | 'walk'
+IV[AGR=[PER=3, NUM=sg]] -> 'disappears' | 'walks'
+IV[AGR=[PER=3, NUM=pl]] -> 'disappear' | 'walk'
+IV -> 'disappeared' | 'walked'|'danced'|'left'|'sang'|'came'
+
+TV[AGR=[PER=1, NUM=sg]] -> 'see' | 'like'
+TV[AGR=[PER=2, NUM=sg]] -> 'see' | 'like'
+TV[AGR=[PER=3, NUM=sg]] -> 'sees' | 'likes'
+TV[AGR=[PER=3, NUM=pl]] -> 'see' | 'like'
+TV -> 'saw' | 'liked'|'baked'
+
+# Adjectives
+Adj -> 'soft'| 'tasty'
+
+# Coordination
+S -> S Join S
+VP -> VP Join VP
+NP -> NP Join NP
+Adj -> Adj Join Adj
+Join -> 'and'|'or'

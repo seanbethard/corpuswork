@@ -1,0 +1,81 @@
+% start S
+
+# ###################
+# Grammar Productions
+# ###################
+
+#
+# S expansion productions
+#
+
+S -> NP VP[AGR=pres]
+
+#
+# NP expansion productions
+#
+
+#
+# VP expansion productions
+#
+
+VP[AGR=pres] -> PRES
+VP[AGR=pres] -> PRES NP
+VP[AGR=pres] -> PRES VP[AGR=perf]
+VP[AGR=pres] -> PRES VP[AGR=inf]
+VP[AGR=pres] -> PRES VP[AGR=prog]
+VP[AGR=pres] -> PRES NEG VP[AGR=perf]
+VP[AGR=pres] -> PRES NEG VP[AGR=inf]
+VP[AGR=pres] -> PRES NEG VP[AGR=prog]
+
+VP[AGR=past] -> PRES
+VP[AGR=past] -> PRES NP
+VP[AGR=past] -> PRES VP[AGR=perf]
+VP[AGR=past] -> PRES VP[AGR=inf]
+VP[AGR=past] -> PRES VP[AGR=prog]
+VP[AGR=past] -> PRES NEG VP[AGR=perf]
+VP[AGR=past] -> PRES NEG VP[AGR=inf]
+VP[AGR=past] -> PRES NEG VP[AGR=prog]
+
+VP[AGR=inf] -> INF VP[AGR=perf]
+VP[AGR=inf] -> INF VP[AGR=pres]
+VP[AGR=inf] -> INF VP[AGR=prog]
+VP[AGR=inf] -> INF NEG VP[AGR=perf]
+VP[AGR=inf] -> INF NEG VP[AGR=pres]
+VP[AGR=inf] -> INF NEG VP[AGR=prog]
+VP[AGR=inf] -> INF NP
+
+VP[AGR=perf] -> PERF NP
+VP[AGR=perf] -> PERF VP[AGR=prog]
+VP[AGR=perf] -> PERF NEG VP[AGR=prog]
+
+VP[AGR=prog] -> PROG NP
+VP[AGR=prog] -> PROG
+
+
+#
+# S expansion productions
+#
+
+ADJ -> 'soft' | 'tasty'
+DET -> 'a' | 'the'
+CONJ -> 'and' | 'or'
+
+# ###################
+# Lexical Productions
+# ###################
+
+# Verbs
+PRES -> 'eats' | 'has' | 'is' | 'might' | 'does' | 'comes' | 'leaves' | 'sings' | 'dances' | 'bakes'
+PAST -> 'ate' | 'had' | 'was' | 'might' | 'did' | 'came' | 'left' | 'sang' | 'danced' | 'baked'
+INF -> 'have' | 'be' | 'eat'
+PERF -> 'been' | 'eaten'
+PROG -> 'eating'
+NEG -> 'not'
+
+# Nouns
+NP -> 'apple' | 'apples' | 'John' | 'cake' | 'Mary'
+
+
+ADJ -> 'soft' | 'tasty'
+DET -> 'a' | 'the'
+CONJ -> 'and' | 'or'

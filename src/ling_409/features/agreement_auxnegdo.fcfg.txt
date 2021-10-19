@@ -1,0 +1,131 @@
+
+% start S
+
+# ###################
+# Grammar Productions
+# ###################
+
+#
+# S expansion productions
+#
+S -> NP[AGR=?a] AuxP[AGR=?a]
+
+AuxP[AGR=?a] -> VP[AGR=?a]| Aux[AGR=?a] VP[AGR=[PER=inf]]|Aux[AGR=?a]AuxP[AGR=?b]
+AuxP[AGR=perf] -> Aux[AGR=perf] ParP[AGR=perf]
+AuxP[AGR=prog] -> Aux[AGR=prog] ParP[AGR=prog]
+ParP[AGR=perf] -> Par[AGR=perf]
+ParP[AGR=prog] -> Par[AGR=prog]
+
+Aux[AGR = perf] -> 'have'
+Aux[AGR = prog] -> 'be'
+
+#Participles
+Par[AGR = perf] -> 'eaten'|'broken'|'walked'
+Par[AGR = prog] -> 'eating'|'breaking'|'walking'
+
+
+# Auxiliaries
+
+Aux -> 'can'|'will'|'must'|'may'|'shall'|'could'|'would'|'had to'|'might'|'should'
+Aux[AGR=[PER=1, NUM = sg]] -> 'am'| 'have'
+Aux[AGR=[PER=2, NUM = sg]] -> 'are'| 'have'
+Aux[AGR=[PER=3, NUM = sg]] -> 'is'| 'has'
+Aux[AGR=[PER=1, NUM = pl]] -> 'are'| 'have'
+Aux[AGR=[PER=2, NUM = pl]] -> 'are'| 'have'
+Aux[AGR=[PER=3, NUM = pl]] -> 'are'| 'have'
+
+Do[AGR=[NUM = sg, PER=3]] -> 'does'
+Do[AGR=[NUM = sg, PER=1]] -> 'do'
+Do[AGR=[NUM = sg, PER=2]] -> 'do'
+Do -> 'do'
+
+
+#
+# NP expansion productions
+#
+
+NP[AGR=?a] -> NAME[AGR=?a]
+NP[AGR=?a] -> PRO[AGR=?a] 
+NP[AGR=?a] -> Det[AGR=?a] N[AGR=?a]
+NP[AGR=[NUM=pl]] -> N[AGR=[NUM=pl]] 
+
+#
+# VP expansion productions
+#
+
+VP[AGR=?a] -> IV[AGR=?a]
+VP[AGR=?a] -> TV[AGR=?a] NP
+
+# ###################
+# Lexical Productions
+# ###################
+
+# Determiners
+Det[AGR=[PER=3, NUM=sg]] -> 'this' | 'that' | 'every' | 'a'
+Det[AGR=[PER=3, NUM=pl]] -> 'these' | 'those' | 'all' | 'most' | 'several'
+Det[AGR=[PER=3]] -> 'the' | 'some' 
+
+# Names
+NAME[AGR=[PER=3, NUM=sg]]-> 'Kim' | 'Jody' | 'John' | 'Mary'
+
+# Nouns
+N[AGR=[PER=3, NUM=sg]] -> 'dog' | 'girl' | 'car' | 'child'|'window'|'cake'
+N[AGR=[PER=3, NUM=pl]] -> 'dogs' | 'girls' | 'cars' | 'children'|'apples'
+
+# Pronouns
+PRO[AGR=[PER=1, NUM=sg]]-> 'I'
+PRO[AGR=[PER=2, NUM=sg]]-> 'you'
+PRO[AGR=[PER=3, NUM=sg]]-> 'he' | 'she'
+PRO[AGR=[PER=1, NUM=pl]]-> 'we'
+PRO[AGR=[PER=2, NUM=pl]]-> 'you'
+PRO[AGR=[PER=3, NUM=pl]]-> 'they'
+
+# Verbs
+IV[AGR=[PER=1, NUM=sg]] -> 'disappear' | 'walk'
+IV[AGR=[PER=2, NUM=sg]] -> 'disappear' | 'walk'
+IV[AGR=[PER=3, NUM=sg]] -> 'disappears' | 'walks'
+IV[AGR=[PER=3, NUM=pl]] -> 'disappear' | 'walk'
+IV[AGR=[PER=inf]] -> 'eat'|'disappear'
+IV -> 'disappeared' | 'walked'|'came'|'left'|'sang'|'danced'|'cried'
+
+TV[AGR=[PER=1, NUM=sg]] -> 'see' | 'like'
+TV[AGR=[PER=2, NUM=sg]] -> 'see' | 'like'
+TV[AGR=[PER=3, NUM=sg]] -> 'sees' | 'likes'|'eats'|'breaks'
+TV[AGR=[PER=3, NUM=pl]] -> 'see' | 'like'|'eat'
+TV[AGR=[PER=inf]] -> 'eat'|'see'|'break'
+TV -> 'saw' | 'liked'|'broke'|'baked'
+
+#Adjectives
+Adj -> 'soft'|'tasty'
+
+# negation
+Neg -> 'not'
+
+#sentence negation
+TP -> Aux Neg
+TP -> Do Neg VP
+
+# complementizers
+C -> 'because'|'although'| 'since'|'when'|'as'|'if'
+
+# coordinators
+Join -> 'and'|'or'
+
+#Adjuncts -PP/CP
+AdP -> P NP| C S
+
+# Adjuncts -Adv
+Adv -> 'often'|'frequently'|'intensionally'
+
+# sentence structure adjunct
+
+S -> NP TP[AGR=?a] AdP | AdP NP TP[AGR=?a]|NP T[AGR=?a] Adv VP | NP T[AGR=?a] VP Adv
+
+#Coordination
+
+NP -> NP Join NP
+VP -> VP Join VP
+S -> NP[AGR=?a] VP[AGR=?a] Join NP[AGR=?b] VP[AGR=?b]
+S -> NP[AGR=?a] VP[AGR=?a] Join VP[AGR=?a]
+NP -> Det AdjP Join NP
+

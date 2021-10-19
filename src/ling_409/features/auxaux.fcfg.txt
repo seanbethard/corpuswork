@@ -1,0 +1,75 @@
+% start S
+
+# ###################
+# Grammar Productions
+# ###################
+
+#
+# S expansion productions
+#
+
+S -> NP[AGR=?a] VP[AGR=?a]
+
+#
+# NP expansion productions
+#
+
+NP[AGR=?a] -> NAME[AGR=?a]
+NP[AGR=?a] -> PRO[AGR=?a] 
+NP[AGR=?a] -> Det[AGR=?a] N[AGR=?a]
+NP[AGR=[NUM=pl]] -> N[AGR=[NUM=pl]] 
+
+#
+# VP expansion productions
+#
+
+VP -> V NP
+
+VP[AGR=modal, +aux] -> V[AGR=modal] VP[AGR=perf, +aux] 
+VP[AGR=modal, +aux] -> V[AGR=modal] VP[AGR=prog, +aux] 
+VP[AGR=modal, +aux] -> V[AGR=modal] VP[AGR=inf, -aux]
+VP[AGR=modal, +aux] -> V[AGR=modal] VP[AGR=perf, +aux] VP[AGR=been, +aux] 
+
+
+VP[AGR=perf, +aux] -> V[AGR=perf, +aux] VP[AGR=prog, +aux]
+VP[AGR=perf, +aux] -> V[AGR=perf, +aux] ParP[AGR = perf]
+
+VP[AGR=prog, +aux] -> V[AGR=prog, +aux] ParP[AGR=prog]
+
+VP[AGR=perf, +aux] -> V[AGR=perf, +aux]
+VP[AGR=prog, +aux] -> V[AGR=prog, +aux]
+VP[AGR=inf, -aux] -> V[AGR=inf, -aux]
+VP[AGR=been, +aux] -> V[AGR=been, +aux]
+
+ParP[AGR=perf] -> Par[AGR=perf]
+ParP[AGR=prog] -> Par[AGR=prog]
+
+
+# ###################
+# Lexical Productions
+# ###################
+ 
+# Infinitives
+V[AGR=inf, -aux] -> 'eat'
+
+#Participles
+Par[AGR=perf] -> 'eaten'
+Par[AGR=prog] -> 'eating'
+
+V[AGR=been, +aux] -> 'been'
+
+V[AGR=prog, +aux] -> 'be'
+
+V[AGR=perf, +aux] -> 'have'
+# Modals
+
+V[AGR=modal, +aux] -> 'can' | 'will' | 'must' | 'may' | 'shall' | 'could' | 'would' | 'might' | 'should'
+
+
+
+# Names
+NAME[AGR=[PER=3, NUM=sg]]-> 'John'
+
+# Nouns
+N[AGR=[PER=3, NUM=sg]] -> 'apple'
+N[AGR=[PER=3, NUM=pl]] -> 'apples'
