@@ -1,0 +1,109 @@
+               all      given      new  no-pivot    (LM)
+
+all          72.46     162.03   185.37    279.95
+
+given        37.34      26.47   219.04     78.55
+
+new         202.90     537.30   116.52    577.64
+
+no-pivot     24.08      27.88   395.13     18.89
+
+(test)
+
+Runs:
+
+1
+
+$ ngram -ppl all_test.txt -order 3 -lm all.lm
+file all_test.txt: 53222 sentences, 373425 words, 2896 OOVs
+0 zeroprobs, logprob= -788227 ppl= 72.4634 ppl1= 134.061
+
+2
+
+$ ngram -ppl given_test.txt -order 3 -lm all.lm
+file given_test.txt: 51938 sentences, 162781 words, 690 OOVs
+0 zeroprobs, logprob= -336501 ppl= 37.3439 ppl1= 119.124
+
+3
+
+$ ngram -ppl new_test.txt -order 3 -lm all.lm
+file new_test.txt: 31982 sentences, 210644 words, 2206 OOVs
+0 zeroprobs, logprob= -554719 ppl= 202.905 ppl1= 458.474
+
+4
+
+$ ngram -ppl nopivot_test.txt -order 3 -lm all.lm
+file nopivot_test.txt: 22667 sentences, 45003 words, 84 OOVs
+0 zeroprobs, logprob= -93380.2 ppl= 24.0796 ppl1= 119.911
+
+5
+
+$ ngram -ppl all_test.txt -order 3 -lm given.lm
+file all_test.txt: 53222 sentences, 373425 words, 25367 OOVs
+0 zeroprobs, logprob= -886670 ppl= 162.033 ppl1= 352.758
+
+6
+
+$ ngram -ppl given_test.txt -order 3 -lm given.lm
+file given_test.txt: 51938 sentences, 162781 words, 1641 OOVs
+0 zeroprobs, logprob= -303159 ppl= 26.4705 ppl1= 76.0925
+
+7
+
+$ ngram -ppl new_test.txt -order 3 -lm given.lm
+file new_test.txt: 31982 sentences, 210644 words, 23726 OOVs
+0 zeroprobs, logprob= -597645 ppl= 537.304 ppl1= 1575.31
+
+8
+
+$ ngram -ppl nopivot_test.txt -order 3 -lm given.lm
+file nopivot_test.txt: 22667 sentences, 45003 words, 368 OOVs
+0 zeroprobs, logprob= -97274.5 ppl= 27.8832 ppl1= 151.123
+
+9
+
+$ ngram -ppl all_test.txt -order 3 -lm new.lm
+file all_test.txt: 53222 sentences, 373425 words, 4964 OOVs
+0 zeroprobs, logprob= -956391 ppl= 185.367 ppl1= 394.128
+
+10
+
+$ ngram -ppl given_test.txt -order 3 -lm new.lm
+file given_test.txt: 51938 sentences, 162781 words, 2377 OOVs
+0 zeroprobs, logprob= -496991 ppl= 219.039 ppl1= 1254.21
+
+11
+
+$ ngram -ppl new_test.txt -order 3 -lm new.lm
+file new_test.txt: 31982 sentences, 210644 words, 2587 OOVs
+0 zeroprobs, logprob= -496018 ppl= 116.521 ppl1= 242.129
+
+12
+
+$ ngram -ppl nopivot_test.txt -order 3 -lm new.lm
+file nopivot_test.txt: 22667 sentences, 45003 words, 1564 OOVs
+0 zeroprobs, logprob= -171660 ppl= 395.129 ppl1= 8948.47
+
+13
+
+$ ngram -ppl all_test.txt -order 3 -lm nopivot.lm
+file all_test.txt: 53222 sentences, 373425 words, 48853 OOVs
+0 zeroprobs, logprob= -924494 ppl= 279.953 ppl1= 705.258
+
+14
+
+$ ngram -ppl given_test.txt -order 3 -lm nopivot.lm
+file given_test.txt: 51938 sentences, 162781 words, 13295 OOVs
+0 zeroprobs, logprob= -381724 ppl= 78.5463 ppl1= 357.747
+
+15
+
+$ ngram -ppl new_test.txt -order 3 -lm nopivot.lm
+file new_test.txt: 31982 sentences, 210644 words, 35558 OOVs
+0 zeroprobs, logprob= -571850 ppl= 577.637 ppl1= 1845.49
+
+16
+
+$ ngram -ppl nopivot_test.txt -order 3 -lm nopivot.lm
+file nopivot_test.txt: 22667 sentences, 45003 words, 1177 OOVs
+0 zeroprobs, logprob= -84862.6 ppl= 18.8914 ppl1= 86.3679
