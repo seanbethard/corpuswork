@@ -1,0 +1,2 @@
+"come over here","{'entities': [{'entity': 'loc', 'value': 'here'}], 'intent': 'stay'}"
+"go over there","{'entities': [{'entity': 'loc', 'value': 'there'}], 'intent': 'go'}"

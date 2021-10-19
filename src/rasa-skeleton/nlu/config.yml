@@ -1,0 +1,31 @@
+# This Rasa pipeline configuration implements CRFsuite for NER, which depends on SpaCy for feature extraction, and an intent classifier with Starspace embeddings from Facebook research.
+
+# language: "en"
+language: "en_core_web_lg"
+
+pipeline:
+- name: "nlp_spacy"
+- name: "tokenizer_spacy"
+- name: "ner_crf"
+
+  features: [["low", "title"], ["bias", "suffix3"], ["upper", "pos", "pos2"]]
+
+  # The flag determines whether to use BILOU tagging or not. BILOU
+  # tagging is more rigorous however
+  # requires more examples per entity. Rule of thumb: use only
+  # if more than 100 examples per entity.
+  BILOU_flag: false
+
+  # This is the value given to sklearn_crfcuite.CRF tagger before training.
+  max_iterations: 50
+
+  # This is the value given to sklearn_crfcuite.CRF tagger before training.
+  # Specifies the L1 regularization coefficient.
+  L1_c: 0.1
+
+  # This is the value given to sklearn_crfcuite.CRF tagger before training.
+  # Specifies the L2 regularization coefficient.
+  L2_c: 0.1
+  
+- name: "intent_featurizer_count_vectors"
+- name: "intent_classifier_tensorflow_embedding"
