@@ -1,101 +1,114 @@
-#!/usr/bin/python
 import pandas as pd
 import psycopg2
-from config import config
+from configparser import ConfigParser
 
 
-def connect():
-    """
-    Connect to postgres server.
-    """
-    conn = None
-    try:
-        print('Connecting to server...')
-        params = config()
-        conn = psycopg2.connect(**params)
-        cur = conn.cursor()
-        cur.execute("SELECT version()")
-        db_version = cur.fetchone()
-        print('Database version:')
-        print(db_version)
-        cur.close()
+def config(filename='database.ini', section='postgresql'):
+    parser = ConfigParser()
+    parser.read(filename)
 
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if conn is not None:
-            conn.close()
-            print('Connection closed.')
+    # get section, default to postgresql
+    db = {}
+    if parser.has_section(section):
+        params = parser.items(section)
+        for param in params:
+            db[param[0]] = param[1]
+    else:
+        raise Exception('Section {0} not found in the {1} file'.format(section, filename))
+
+    return db
 
 
-def create_sentences_table():
-    """
-    Create sentences table.
-    """
-    conn = None
-    try:
+class KomatsuPostgres:
 
-        print('Creating table...')
-        params = config()
-        conn = psycopg2.connect(**params)
-        cur = conn.cursor()
-        cur.execute("CREATE TABLE sentences( uuid UUID UNIQUE NOT NULL, sentence TEXT NOT NULL);")
-        cur.close()
+    @staticmethod
+    def connect():
+        """
+        Connect to postgres server.
+        """
+        conn = None
+        try:
+            print('Connecting to server...')
+            params = config()
+            conn = psycopg2.connect(**params)
+            cur = conn.cursor()
+            cur.execute("SELECT version()")
+            db_version = cur.fetchone()
+            print('Database version:')
+            print(db_version)
+            cur.close()
 
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if conn is not None:
-            conn.close()
-            print('Connection closed.')
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+        finally:
+            if conn is not None:
+                conn.close()
+                print('Connected. Connection closed.')
 
+    @staticmethod
+    def create_sentences_table():
+        """
+        Create sentences table.
+        """
+        conn = None
+        try:
 
-def write_sentences():
-    """
-    Write sentences to table.
-    """
-    conn = None
-    try:
+            print('Creating table...')
+            params = config()
+            conn = psycopg2.connect(**params)
+            cur = conn.cursor()
+            cur.execute("CREATE TABLE sentences( uuid UUID UNIQUE NOT NULL, sentence TEXT NOT NULL);")
+            cur.close()
 
-        print('Writing sentences...')
-        params = config()
-        conn = psycopg2.connect(**params)
-        cur = conn.cursor()
-        cur.execute("COPY sentences(uuid,sentence) FROM 'comcrawl.csv' DELIMITER ',' CSV HEADER;")
-        conn.commit()
-        cur.close()
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+        finally:
+            if conn is not None:
+                conn.close()
+                print('Sentences table created. Connection closed.')
 
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if conn is not None:
-            conn.close()
-            print('Connection closed.')
+    @staticmethod
+    def copy_sentences():
+        """
+        Copy sentences to from CSV.
+        """
+        conn = None
+        try:
 
+            print('Copying sentences...')
+            params = config()
+            conn = psycopg2.connect(**params)
+            cur = conn.cursor()
+            cur.execute("COPY sentences(uuid,sentence) FROM 'sentences-comcrawl.csv' DELIMITER ',' CSV HEADER;")
+            conn.commit()
+            cur.close()
 
-def read_and_write_sentences():
-    """
-    Read sentences from table and write them to CSV format.
-    """
-    conn = None
-    try:
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+        finally:
+            if conn is not None:
+                conn.close()
+                print('Sentences copied. Connection closed.')
 
-        print('Reading sentences...')
-        params = config()
-        conn = psycopg2.connect(**params)
-        cur = conn.cursor()
-        cur.execute("SELECT * FROM sentences;")
-        sentences = cur.fetchone()
-        pd.DataFrame(sentences).to_csv('sentences.csv')
-        cur.close()
+    @staticmethod
+    def write_sentences():
+        """
+        Write all postgres sentences to CSV.
+        """
+        conn = None
+        try:
 
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if conn is not None:
-            conn.close()
-            print('Connection closed.')
+            print('Writing sentences...')
+            params = config()
+            conn = psycopg2.connect(**params)
+            cur = conn.cursor()
+            cur.execute("SELECT * FROM sentences;")
+            sentences = cur.fetchone()
+            pd.DataFrame(sentences).to_csv('all-sentences.csv')
+            cur.close()
 
-
-if __name__ == '__main__':
-    connect()
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+        finally:
+            if conn is not None:
+                conn.close()

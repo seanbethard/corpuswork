@@ -1,4 +1,5 @@
 from komatsu.nl import Collection
+from postgres.postgres import KomatsuPostgres
 
 
 if __name__ == "__main__":
@@ -6,8 +7,17 @@ if __name__ == "__main__":
     # define search query
     search_query = ''
 
-    # get raw HTML
+    # get comcrawl HTML
     Collection.get_raw_html(search_query, create_index=False)
 
-    # get sentences
+    # identify sentences in HTML and extract them
     Collection.sentence_finder('comcrawl.csv')
+
+    # write sentences to postgres
+    db = KomatsuPostgres()
+    db.connect()
+    db.create_sentences_table()
+    db.copy_sentences()
+
+    # get all sentences from postgres
+    db.write_sentences()
