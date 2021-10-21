@@ -15,9 +15,9 @@ if __name__ == "__main__":
 
     # write sentences to postgres
     db = KomatsuPostgres()
-    db.connect()
-    db.create_sentences_table()
-    db.copy_sentences()
+    db.connect(db)
+    db.create_sentences_table(db)
+    db.copy_sentences(db)
 
     # get all sentences from postgres
-    db.write_sentences()
+    db.write_sentences(db)

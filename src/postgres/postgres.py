@@ -21,94 +21,87 @@ def config(filename='database.ini', section='postgresql'):
 
 class KomatsuPostgres:
 
+    def __init__(self):
+        self.params = config()
+        self.conn = psycopg2.connect(**self.params)
+        self.cur = self.conn.cursor()
+
     @staticmethod
-    def connect():
+    def connect(self):
         """
         Connect to postgres server.
         """
-        conn = None
+        self.conn = None
         try:
             print('Connecting to server...')
-            params = config()
-            conn = psycopg2.connect(**params)
-            cur = conn.cursor()
-            cur.execute("SELECT version()")
-            db_version = cur.fetchone()
+            self.cur.execute("SELECT version()")
+            db_version = self.cur.fetchone()
             print('Database version:')
             print(db_version)
-            cur.close()
+            self.cur.close()
 
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
         finally:
-            if conn is not None:
-                conn.close()
+            if self.conn is not None:
+                self.conn.close()
                 print('Connected. Connection closed.')
 
     @staticmethod
-    def create_sentences_table():
+    def create_sentences_table(self):
         """
         Create sentences table.
         """
-        conn = None
+        self.conn = None
         try:
 
             print('Creating table...')
-            params = config()
-            conn = psycopg2.connect(**params)
-            cur = conn.cursor()
-            cur.execute("CREATE TABLE sentences( uuid UUID UNIQUE NOT NULL, sentence TEXT NOT NULL);")
-            cur.close()
+            self.cur.execute("CREATE TABLE sentences( uuid UUID UNIQUE NOT NULL, sentence TEXT NOT NULL);")
+            self.cur.close()
 
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
         finally:
-            if conn is not None:
-                conn.close()
+            if self.conn is not None:
+                self.conn.close()
                 print('Sentences table created. Connection closed.')
 
     @staticmethod
-    def copy_sentences():
+    def copy_sentences(self):
         """
         Copy sentences to from CSV.
         """
-        conn = None
+        self.conn = None
         try:
 
             print('Copying sentences...')
-            params = config()
-            conn = psycopg2.connect(**params)
-            cur = conn.cursor()
-            cur.execute("COPY sentences(uuid,sentence) FROM 'sentences-comcrawl.csv' DELIMITER ',' CSV HEADER;")
-            conn.commit()
-            cur.close()
+            self.cur.execute("COPY sentences(uuid,sentence) FROM 'sentences-comcrawl.csv' DELIMITER ',' CSV HEADER;")
+            self.conn.commit()
+            self.cur.close()
 
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
         finally:
-            if conn is not None:
-                conn.close()
+            if self.conn is not None:
+                self.conn.close()
                 print('Sentences copied. Connection closed.')
 
     @staticmethod
-    def write_sentences():
+    def write_sentences(self):
         """
         Write all postgres sentences to CSV.
         """
-        conn = None
+        self.conn = None
         try:
 
             print('Writing sentences...')
-            params = config()
-            conn = psycopg2.connect(**params)
-            cur = conn.cursor()
-            cur.execute("SELECT * FROM sentences;")
-            sentences = cur.fetchone()
+            self.cur.execute("SELECT * FROM sentences;")
+            sentences = self.cur.fetchone()
             pd.DataFrame(sentences).to_csv('all-sentences.csv')
-            cur.close()
+            self.cur.close()
 
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
         finally:
-            if conn is not None:
-                conn.close()
+            if self.conn is not None:
+                self.conn.close()
