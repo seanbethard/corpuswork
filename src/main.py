@@ -5,10 +5,10 @@ from postgres.postgres import KomatsuPostgres
 if __name__ == "__main__":
 
     # define search query
-    search_query = ''
+    search_query = 'https://www.interestingelectronics.com/old/*'
 
     # get comcrawl HTML
-    Collection.get_raw_html(search_query, create_index=False)
+    Collection.get_raw_html(search_query, create_index=True)
 
     # identify sentences in HTML and extract them
     Collection.sentence_finder('comcrawl.csv')
