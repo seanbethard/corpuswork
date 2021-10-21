@@ -59,6 +59,7 @@ class Collection:
         uuids = []
         sentences = []
 
+        print('Finding sentences...')
         for page in html_pages:
 
             if isinstance(page, str):

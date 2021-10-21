@@ -23,28 +23,29 @@ class KomatsuPostgres:
 
     def __init__(self):
         self.params = config()
-        self.conn = psycopg2.connect(**self.params)
-        self.cur = self.conn.cursor()
 
     @staticmethod
     def connect(self):
         """
         Connect to postgres server.
         """
-        self.conn = None
+        conn = None
         try:
+
             print('Connecting to server...')
-            self.cur.execute("SELECT version()")
-            db_version = self.cur.fetchone()
+            conn = psycopg2.connect(**self.params)
+            cur = conn.cursor()
+            cur.execute("SELECT version()")
+            db_version = cur.fetchone()
             print('Database version:')
             print(db_version)
-            self.cur.close()
+            cur.close()
 
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
         finally:
-            if self.conn is not None:
-                self.conn.close()
+            if conn is not None:
+                conn.close()
                 print('Connected. Connection closed.')
 
     @staticmethod
@@ -52,18 +53,20 @@ class KomatsuPostgres:
         """
         Create sentences table.
         """
-        self.conn = None
+        conn = None
         try:
 
             print('Creating table...')
-            self.cur.execute("CREATE TABLE sentences( uuid UUID UNIQUE NOT NULL, sentence TEXT NOT NULL);")
-            self.cur.close()
+            conn = psycopg2.connect(**self.params)
+            cur = conn.cursor()
+            cur.execute("CREATE TABLE sentences( uuid UUID UNIQUE NOT NULL, sentence TEXT NOT NULL);")
+            cur.close()
 
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
         finally:
-            if self.conn is not None:
-                self.conn.close()
+            if conn is not None:
+                conn.close()
                 print('Sentences table created. Connection closed.')
 
     @staticmethod
@@ -71,19 +74,21 @@ class KomatsuPostgres:
         """
         Copy sentences to from CSV.
         """
-        self.conn = None
+        conn = None
         try:
 
             print('Copying sentences...')
-            self.cur.execute("COPY sentences(uuid,sentence) FROM 'sentences-comcrawl.csv' DELIMITER ',' CSV HEADER;")
-            self.conn.commit()
-            self.cur.close()
+            conn = psycopg2.connect(**self.params)
+            cur = conn.cursor()
+            cur.execute("COPY sentences(uuid,sentence) FROM 'sentences-comcrawl.csv' DELIMITER ',' CSV HEADER;")
+            conn.commit()
+            cur.close()
 
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
         finally:
-            if self.conn is not None:
-                self.conn.close()
+            if conn is not None:
+                conn.close()
                 print('Sentences copied. Connection closed.')
 
     @staticmethod
@@ -91,17 +96,19 @@ class KomatsuPostgres:
         """
         Write all postgres sentences to CSV.
         """
-        self.conn = None
+        conn = None
         try:
 
             print('Writing sentences...')
-            self.cur.execute("SELECT * FROM sentences;")
-            sentences = self.cur.fetchone()
+            conn = psycopg2.connect(**self.params)
+            cur = conn.cursor()
+            cur.execute("SELECT * FROM sentences;")
+            sentences = cur.fetchone()
             pd.DataFrame(sentences).to_csv('all-sentences.csv')
-            self.cur.close()
+            cur.close()
 
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
         finally:
-            if self.conn is not None:
-                self.conn.close()
+            if conn is not None:
+                conn.close()
