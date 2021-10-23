@@ -2,6 +2,7 @@ from komatsu.nl import Collection
 from postgres.postgres import KomatsuPostgres
 import pandas as pd
 from komatsu.nl import SentenceAnalyzer
+import glob
 
 if __name__ == "__main__":
 
@@ -32,3 +33,16 @@ if __name__ == "__main__":
         sentiment_scores.append(SentenceAnalyzer.get_sentiment_scores(sentence))
 
     SentenceAnalyzer.evaluate_polarity_score(sentiment_scores)
+
+    # gsutil cp -r gs://gresearch/goemotions/data/full_dataset/ .
+    path = r'full_dataset'
+    all_files = glob.glob(path + "/*.csv")
+
+    li = []
+
+    for filename in all_files:
+        df = pd.read_csv(filename, index_col=None, header=0)
+        li.append(df)
+
+    df = pd.concat(li, axis=0, ignore_index=True)
+    print(len(df))
