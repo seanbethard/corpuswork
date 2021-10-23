@@ -5,6 +5,8 @@ import spacy
 from bs4 import BeautifulSoup
 import uuid
 import csv
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from textblob import TextBlob
 
 
 class Collection:
@@ -82,3 +84,28 @@ class Collection:
 
             for i in range(len(uuids)):
                 writer.writerow({'uuid': uuids[i], 'sentence': sentences[i]})
+
+
+class SentenceAnalyzer:
+
+    @staticmethod
+    def get_sentiment_scores(sentence):
+
+        # add sentence
+        scores = {'sentence': sentence}
+
+        # add nltk scores
+        sia = SentimentIntensityAnalyzer()
+        scores.update(sia.polarity_scores(sentence))
+
+        # add textblob scores
+        polarity_subjectivity = TextBlob(sentence).sentiment._asdict()
+        scores.update(polarity_subjectivity)
+
+        return scores
+
+    @staticmethod
+    def evaluate_polarity_score(sentiment_scores):
+        for result in sentiment_scores:
+            if result['polarity'] > 0.5:
+                print(result['sentence'])
