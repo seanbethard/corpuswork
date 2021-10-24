@@ -172,7 +172,6 @@ class EmotionClassifier:
         self.checkpoint_path = "training_1/cp.ckpt"
         self.checkpoint_dir = os.path.dirname(self.checkpoint_path)
 
-
     @staticmethod
     def load_goemotions_dataset(self):
         # gsutil cp -r gs://gresearch/goemotions/data/full_dataset/ .
@@ -266,12 +265,11 @@ class EmotionClassifier:
         print("Shape of data tensor:", self.data.shape)
 
     @staticmethod
-    def train_and_evaluate_model(self):
+    def train_model(self):
 
         cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=self.checkpoint_path,
                                                          save_weights_only=True,
                                                          verbose=1)
-
 
         # train model
         print("Training 1D convnet with global maxpooling...")
@@ -284,8 +282,14 @@ class EmotionClassifier:
             callbacks=[cp_callback]
         )
 
+    @staticmethod
+    def evaluate_model(self):
+
+        model = self.load_model(self)
+        model.load_weights(self.checkpoint_path)
+
         # plot mean auc for each label
-        p = self.model.predict(self.data)
+        p = model.predict(self.data)
 
         aucs = []
         for j in range(6):
