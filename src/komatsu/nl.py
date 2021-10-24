@@ -216,7 +216,6 @@ class EmotionClassifier:
                     embedding_matrix[i] = embedding_vector
         return num_words, embedding_matrix
 
-
     @staticmethod
     def load_model(self):
 
@@ -292,8 +291,26 @@ class EmotionClassifier:
         p = model.predict(self.data)
 
         aucs = []
-        for j in range(6):
-            auc = roc_auc_score(self.targets[:,j], p[:,j])
+
+        for i in range(6):
+            auc = roc_auc_score(self.targets[:,i], p[:,i])
             aucs.append(auc)
 
         print(np.mean(aucs))
+
+    def predict_sentence(self, sentence):
+        """
+        Make sentence-level prediction.
+
+        :param sentence: str: sentence
+        :return: EagerTensor: predictions
+        """
+
+        seqs = self.tokenizer.texts_to_sequences(sentence)
+        data = pad_sequences(seqs, maxlen=self.MAX_SEQ_LEN)
+
+        model = self.load_model(self)
+        model.load_weights(self.checkpoint_path)
+
+        p = model(data)
+        return p
