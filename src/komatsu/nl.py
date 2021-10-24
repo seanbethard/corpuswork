@@ -16,6 +16,7 @@ from keras.layers import Dense, Input, GlobalMaxPooling1D
 from keras.layers import Conv1D, MaxPooling1D, Embedding
 from keras.models import Model
 from sklearn.metrics import roc_auc_score
+import tensorflow as tf
 
 
 class Collection:
@@ -168,6 +169,9 @@ class EmotionClassifier:
         self.data = pad_sequences(self.seqs, maxlen=self.MAX_SEQ_LEN)
         self.num_words, self.embedding_matrix = self.load_embedding_matrix(self)
         self.model = self.load_model(self)
+        self.checkpoint_path = "training_1/cp.ckpt"
+        self.checkpoint_dir = os.path.dirname(self.checkpoint_path)
+
 
     @staticmethod
     def load_goemotions_dataset(self):
@@ -248,6 +252,8 @@ class EmotionClassifier:
             metrics=['accuracy']
         )
 
+        print(model.summary())
+
         return model
 
     @staticmethod
@@ -262,6 +268,11 @@ class EmotionClassifier:
     @staticmethod
     def train_and_evaluate_model(self):
 
+        cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=self.checkpoint_path,
+                                                         save_weights_only=True,
+                                                         verbose=1)
+
+
         # train model
         print("Training 1D convnet with global maxpooling...")
         r = self.model.fit(
@@ -269,7 +280,8 @@ class EmotionClassifier:
             self.targets,
             batch_size=self.BATCH_SIZE,
             epochs=self.EPOCHS,
-            validation_split=self.VALIDATION_SPLIT
+            validation_split=self.VALIDATION_SPLIT,
+            callbacks=[cp_callback]
         )
 
         # plot mean auc for each label
