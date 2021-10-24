@@ -40,7 +40,8 @@ def do_sentiment_analysis():
 def do_emotion_classification():
     ec = EmotionClassifier()
     ec.print_sentence_info(ec)
-    ec.train_and_evaluate_model(ec)
+    # ec.train_model(ec)
+    ec.evaluate_model(ec)
 
 
 if __name__ == "__main__":
