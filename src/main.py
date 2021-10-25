@@ -43,6 +43,11 @@ def do_emotion_classification():
     # ec.train_model(ec)
     ec.evaluate_model(ec)
 
+    df = pd.read_csv('sentences-comcrawl.csv')
+    sentences = df.iloc[:, 1]
+    predictions = ec.predict_sentence(sentences)
+    assert len(sentences) == len(predictions)
+
 
 if __name__ == "__main__":
     do_emotion_classification()

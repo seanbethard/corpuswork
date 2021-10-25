@@ -319,5 +319,5 @@ class EmotionClassifier:
         model = self.load_model(self)
         model.load_weights(self.checkpoint_path)
 
-        p = model(data)
-        return p
+        predictions = model.predict(data, batch_size=32)
+        return predictions
