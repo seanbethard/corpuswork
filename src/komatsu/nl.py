@@ -17,6 +17,7 @@ from keras.layers import Conv1D, MaxPooling1D, Embedding
 from keras.models import Model
 from sklearn.metrics import roc_auc_score
 import tensorflow as tf
+from nltk.corpus import wordnet as wn
 
 
 class Collection:
@@ -119,6 +120,12 @@ class SentenceAnalyzer:
         for result in sentiment_scores:
             if result['polarity'] > 0.5:
                 print(result['sentence'])
+
+    @staticmethod
+    def get_synsets(sentence):
+        tokens = sentence.split()
+        synsets = [wn.synsets(token) for token in tokens]
+        return synsets
 
 
 class EmotionClassifier:
