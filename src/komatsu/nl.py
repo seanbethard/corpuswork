@@ -13,11 +13,12 @@ import numpy as np
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
 from keras.layers import Dense, Input, GlobalMaxPooling1D
-from keras.layers import Conv1D, MaxPooling1D, Embedding
+from keras.layers import Conv1D, MaxPooling1D, Embedding, LSTM
 from keras.models import Model
 from sklearn.metrics import roc_auc_score
 import tensorflow as tf
 from nltk.corpus import wordnet as wn
+from tensorflow.keras.callbacks import EarlyStopping
 
 
 class Collection:
@@ -175,9 +176,12 @@ class EmotionClassifier:
         self.word2idx = self.tokenizer.word_index
         self.data = pad_sequences(self.seqs, maxlen=self.MAX_SEQ_LEN)
         self.num_words, self.embedding_matrix = self.load_embedding_matrix(self)
-        self.model = self.load_model(self)
-        self.checkpoint_path = "training_1/cp.ckpt"
-        self.checkpoint_dir = os.path.dirname(self.checkpoint_path)
+        self.convnet = self.load_convnet(self)
+        self.lstm = self.load_lstm(self)
+        self.checkpoint_path_convnet = "training_convnet/cp.ckpt"
+        self.checkpoint_dir_convnet = os.path.dirname(self.checkpoint_path_convnet)
+        self.checkpoint_path_lstm = "training_lstm/cp.ckpt"
+        self.checkpoint_dir_lstm = os.path.dirname(self.checkpoint_path_lstm)
 
     @staticmethod
     def load_goemotions_dataset(self):
@@ -224,19 +228,19 @@ class EmotionClassifier:
         return num_words, embedding_matrix
 
     @staticmethod
-    def load_model(self):
+    def load_convnet(self):
+        """
+        1D convnet with global maxpooling.")
+        """
 
-        # embedding layer
         embedding_layer = Embedding(
             self.num_words,
             self.EMBEDDING_DIM,
             weights=[self.embedding_matrix],
             input_length=self.MAX_SEQ_LEN,
             trainable=False
-
         )
 
-        # model definition
         input_ = Input(shape=(self.MAX_SEQ_LEN,))
         x = embedding_layer(input_)
         x = Conv1D(128, 3, activation='relu')(x)
@@ -262,6 +266,43 @@ class EmotionClassifier:
         return model
 
     @staticmethod
+    def load_lstm(self):
+        """
+        LSTM with global maxpooling.
+        """
+
+        # hidden state dimensionality
+        M = 15
+
+        embedding_layer = Embedding(
+            self.num_words,
+            self.EMBEDDING_DIM,
+            weights=[self.embedding_matrix],
+            input_length=self.MAX_SEQ_LEN,
+            trainable=False
+        )
+
+        i = Input(shape=(self.MAX_SEQ_LEN,))
+        x = embedding_layer(i)
+
+        x = LSTM(M, return_sequences=True)(x)
+        x = GlobalMaxPooling1D()(x)
+
+        x = Dense(28, activation='softmax')(x)
+
+        model = Model(i,x)
+
+        model.compile(
+            loss='categorical_crossentropy',
+            optimizer='rmsprop',
+            metrics=['accuracy']
+        )
+
+        print(model.summary())
+
+        return model
+
+    @staticmethod
     def print_sentence_info(self):
         print("Max sequence length: %s" % max(len(sentence) for sentence in self.sentences))
         print("Min sequence length: %s" % min(len(sentence) for sentence in self.sentences))
@@ -271,36 +312,61 @@ class EmotionClassifier:
         print("Shape of data tensor:", self.data.shape)
 
     @staticmethod
-    def train_model(self):
+    def train_convnet(self):
 
-        cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=self.checkpoint_path,
+        early_callback = EarlyStopping(monitor='val_accuracy', patience=1)
+
+        convnet_callback = tf.keras.callbacks.ModelCheckpoint(filepath=self.checkpoint_path_convnet,
                                                          save_weights_only=True,
                                                          verbose=1)
 
         # train model
-        print("Training 1D convnet with global maxpooling...")
-        r = self.model.fit(
+        r = self.convnet.fit(
             self.data,
             self.targets,
             batch_size=self.BATCH_SIZE,
             epochs=self.EPOCHS,
             validation_split=self.VALIDATION_SPLIT,
-            callbacks=[cp_callback]
+            callbacks=[early_callback, convnet_callback]
         )
 
     @staticmethod
+    def train_lstm(self):
+
+        early_callback = EarlyStopping(monitor='val_accuracy', patience=1)
+
+        lstm_callback = tf.keras.callbacks.ModelCheckpoint(filepath=self.checkpoint_path_lstm,
+                                                           save_weights_only=True,
+                                                           verbose=1)
+
+        # train model
+        r = self.lstm.fit(
+            self.data,
+            self.targets,
+            batch_size=self.BATCH_SIZE,
+            epochs=self.EPOCHS,
+            validation_split=self.VALIDATION_SPLIT,
+            callbacks=[early_callback, lstm_callback]
+        )
+
     def evaluate_model(self):
 
-        model = self.load_model(self)
-        model.load_weights(self.checkpoint_path)
+        lstm = self.load_lstm(self)
+        lstm.load_weights(self.checkpoint_path_lstm)
 
         # plot mean auc for each label
-        p = model.predict(self.data)
+        lstm_predictions = lstm.predict(self.data)
+
+        print("Mean auc lstm:")
+        self.print_mean_auc_score(self, lstm_predictions)
+
+    @staticmethod
+    def print_mean_auc_score(self, predictions):
 
         aucs = []
 
         for i in range(6):
-            auc = roc_auc_score(self.targets[:,i], p[:,i])
+            auc = roc_auc_score(self.targets[:,i], predictions[:,i])
             aucs.append(auc)
 
         print(np.mean(aucs))
@@ -316,8 +382,8 @@ class EmotionClassifier:
         seqs = self.tokenizer.texts_to_sequences(sentence)
         data = pad_sequences(seqs, maxlen=self.MAX_SEQ_LEN)
 
-        model = self.load_model(self)
-        model.load_weights(self.checkpoint_path)
+        lstm = self.load_lstm(self)
+        lstm.load_weights(self.checkpoint_path_lstm)
 
-        predictions = model.predict(data, batch_size=32)
-        return predictions
+        lstm_predictions = lstm.predict(data, batch_size=32)
+        return lstm_predictions

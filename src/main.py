@@ -40,13 +40,14 @@ def do_sentiment_analysis():
 def do_emotion_classification():
     ec = EmotionClassifier()
     ec.print_sentence_info(ec)
-    # ec.train_model(ec)
-    ec.evaluate_model(ec)
-
+    ec.train_convnet(ec)
+    ec.train_lstm(ec)
+    ec.evaluate_model()
     df = pd.read_csv('sentences-comcrawl.csv')
     sentences = df.iloc[:, 1]
-    predictions = ec.predict_sentence(sentences)
-    assert len(sentences) == len(predictions)
+    lstm_predictions = ec.predict_sentence(sentences)
+    print(lstm_predictions)
+    assert len(sentences) == len(lstm_predictions)
 
 
 if __name__ == "__main__":
