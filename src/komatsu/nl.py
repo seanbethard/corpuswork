@@ -294,7 +294,7 @@ class EmotionClassifier:
 
         model.compile(
             loss='categorical_crossentropy',
-            optimizer='rmsprop',
+            optimizer='adam',
             metrics=['accuracy']
         )
 
