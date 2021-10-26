@@ -5,4 +5,4 @@ Methods for working with text.
 * Keep sentences in PostgreSQL.
 * Support for English sentence-level:
     * Sentiment analysis (VADER, TextBlob).
-    * Emotion classification (GoEmotions, ConvNet).
+    * Emotion classification (GoEmotions, ConvNet, LSTM).
