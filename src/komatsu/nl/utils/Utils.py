@@ -11,6 +11,33 @@ from textblob import TextBlob
 import psycopg2
 from configparser import ConfigParser
 
+sbd = spacy.load("en_core_web_lg")
+
+
+def prepare_openwebtext_archive(archive):
+
+    with open(archive, 'r') as file:
+        data = file.read().replace('\n', '')
+
+    uuids = []
+    sentences = []
+    spacy_doc = sbd(data)
+
+    for sentence in spacy_doc.sents:
+        sentences.append(sentence.text)
+        uuids.append(str(uuid.uuid4()))
+
+    with open('sentences-openwebtext.csv', mode='w') as f:
+
+        fieldnames = ['uuid', 'sentence']
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+
+        assert len(uuids) == len(sentences)
+
+        for i in range(len(uuids)):
+            writer.writerow({'uuid': uuids[i], 'sentence': sentences[i]})
+
 
 def find_comcrawl_sentences(comcrawl_csv):
     """
@@ -19,7 +46,6 @@ def find_comcrawl_sentences(comcrawl_csv):
 
     :param comcrawl_csv: str: comcrawl HTML results
     """
-    sbd = spacy.load("en_core_web_lg")
     df = pd.read_csv(comcrawl_csv)
 
     html_pages = df['html'].tolist()
