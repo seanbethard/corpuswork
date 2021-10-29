@@ -289,7 +289,7 @@ class KomatsuPostgres:
             print('Copying sentences...')
             conn = psycopg2.connect(**self.params)
             cur = conn.cursor()
-            cur.execute("COPY sentences(uuid,sentence) FROM '/home/komatsu/Desktop/komatsu-desktop/corpuswork/src/sentences-openwebtext.csv' DELIMITER ',' CSV HEADER;")
+            cur.execute("COPY sentences(uuid,sentence) FROM 'sentences-openwebtext.csv' DELIMITER ',' CSV HEADER;")
             conn.commit()
             cur.close()
 
