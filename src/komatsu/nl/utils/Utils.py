@@ -14,29 +14,35 @@ from configparser import ConfigParser
 sbd = spacy.load("en_core_web_lg")
 
 
-def prepare_openwebtext_archive(archive):
+def prepare_openwebtext_archive(archives):
 
-    with open(archive, 'r') as file:
-        data = file.read().replace('\n', '')
+    openwebtext = []
+
+    for archive in archives:
+        with open(archive, 'r', encoding='utf8') as file:
+            openwebtext.append(file.read().replace('\n', ''))
 
     uuids = []
     sentences = []
-    spacy_doc = sbd(data)
 
-    for sentence in spacy_doc.sents:
-        sentences.append(sentence.text)
-        uuids.append(str(uuid.uuid4()))
+    for arch in openwebtext:
 
-    with open('sentences-openwebtext.csv', mode='w') as f:
+        spacy_doc = sbd(arch)
 
-        fieldnames = ['uuid', 'sentence']
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-        writer.writeheader()
+        for sentence in spacy_doc.sents:
+            sentences.append(sentence.text)
+            uuids.append(str(uuid.uuid4()))
 
-        assert len(uuids) == len(sentences)
+        with open('sentences-openwebtext.csv', mode='w') as f:
 
-        for i in range(len(uuids)):
-            writer.writerow({'uuid': uuids[i], 'sentence': sentences[i]})
+            fieldnames = ['uuid', 'sentence']
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+
+            assert len(uuids) == len(sentences)
+
+            for i in range(len(uuids)):
+                writer.writerow({'uuid': uuids[i], 'sentence': sentences[i]})
 
 
 def find_comcrawl_sentences(comcrawl_csv):
@@ -283,7 +289,7 @@ class KomatsuPostgres:
             print('Copying sentences...')
             conn = psycopg2.connect(**self.params)
             cur = conn.cursor()
-            cur.execute("COPY sentences(uuid,sentence) FROM 'sentences-comcrawl.csv' DELIMITER ',' CSV HEADER;")
+            cur.execute("COPY sentences(uuid,sentence) FROM '/home/komatsu/Desktop/komatsu-desktop/corpuswork/src/sentences-openwebtext.csv' DELIMITER ',' CSV HEADER;")
             conn.commit()
             cur.close()
 
