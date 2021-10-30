@@ -5,7 +5,7 @@ import os
 if __name__ == "__main__":
     archives = []
     for archive in os.listdir('openwebtext'):
-        if archive.endswith('_data'):
+        if archive.endswith('urlsf_subset00-10*_data'):
             archives.append(os.path.join('openwebtext', archive))
 
     sentences = prepare_openwebtext_archive(archives)
